@@ -147,7 +147,7 @@ abstract class BaseValidator
 
 			//determine if any errors occured
 			if(!$this->runner->passes())
-				$this->errors->merge($this->runner->toArray());
+				$this->addErrBag($this->runner->messages());
 		}
 		return $this->pass();
 	}
