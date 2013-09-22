@@ -64,20 +64,6 @@ abstract class BaseValidator
 	const 	MODE_DELETE = 'delete';
 
 	/**
-	 * Create a new instance of the validator
-	 * @param \Illuminate\Validation\Validator $runner 
-	 * @param array    $rules  
-	 * @param array    $data   
-	 * @param array    $messages
-	 */
-	public function __construct(array $rules = [], array $data = [], array $messages = [])
-	{
-		$this->rules = $rules;
-		$this->data = $this->parseData($data);
-		$this->messages = $messages;
-	}
-
-	/**
 	 * Set mode to insert
 	 * @return \Iyoworks\Repository\Validator
 	 */
