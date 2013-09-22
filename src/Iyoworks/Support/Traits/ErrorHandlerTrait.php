@@ -2,6 +2,9 @@
 
 trait ErrorHandlerTrait
 {
+	/**
+	 * @var \Illuminate\Support\MessageBag
+	 */
 	protected $errors;
 	
 	/**

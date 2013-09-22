@@ -14,11 +14,6 @@ abstract class BaseValidator
 	protected $runner;
 
 	/**
-	 * @var \Illuminate\Support\MessageBag
-	 */
-	protected $errors;
-
-	/**
 	* @var array
 	*/
 	protected $data = [];
