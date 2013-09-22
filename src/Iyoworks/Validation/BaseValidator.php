@@ -224,7 +224,7 @@ abstract class BaseValidator
 	public function addData($data, $value = null)
 	{
 		if($value) 
-			$this->data[$data] = $this->parseData($value);
+			$this->data[$data] = $value;
 		else 
 			$this->data = array_merge_recursive($this->data, $this->parseData($data));
 		return $this;
