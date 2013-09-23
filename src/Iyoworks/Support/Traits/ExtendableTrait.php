@@ -1,5 +1,6 @@
 <?php namespace Iyoworks\Support\Traits;
-use Iyoworks\BadMethodCallException;
+use BadMethodCallException;
+
 trait ExtendableTrait
 {
 	protected static $extensions = array();
@@ -17,6 +18,6 @@ trait ExtendableTrait
 			array_push($args, $this);
 			return callFuncWithArgs($func, $args);
 		}
-		throw BadMethodCallException::make('exceptions.method_dne', compact('method'));
+		throw new BadMethodCallException($method);
 	}
 }
