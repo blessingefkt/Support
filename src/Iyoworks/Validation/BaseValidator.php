@@ -154,6 +154,9 @@ abstract class BaseValidator
 
 	/**
 	 * Set the ID or value for a unique rule
+	 * 	$this->setUnique('name', 'id') - get the name rule and append $this->data['id'] to it
+	 * 	$this->setUnique('name', 4, true) - get the name rule and append 4 to it
+	 * 	NOTE: rule should have table column already appended to it.
 	 * @param string  $key       data attribute name
 	 * @param mixed  $value     
 	 * @param boolean $useActual use the actual $value
@@ -194,7 +197,7 @@ abstract class BaseValidator
 			elseif(method_exists($_data, 'toArray'))
 				return $_data->toArray();
 		}
-		return (array) $_data;
+		return $_data;
 	}
 
 	/**
