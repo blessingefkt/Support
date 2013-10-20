@@ -3,10 +3,13 @@ use Lang;
 use Config;
 trait ExceptionTrait{
 	protected $title;
+	protected static $transformLangGroup;
 
 	public static function make($message = null, $langParams = array(), $title = null, $code = 0)
 	{
-		if($message and (Lang::has($message) or Lang::has($nmessage = 'exceptions.'.$message)))
+		static::beforeMake();
+
+		if($message and (Lang::has($message) or Lang::has($nmessage = static::$transformLangGroup($message))))
 		{
 			$locale = Config::get('app.locale');
 			if (!is_array($langParams)) $langParams = ['value' => $langParams];
@@ -18,6 +21,12 @@ trait ExceptionTrait{
 		if($title) $error->setTitle($title);
 
 		return $error;
+	}
+
+	public static function beforeMake()
+	{
+		static::$transformLangGroup = function($msg){ return 'exceptions.'.$msg; };
+		
 	}
 
 	public function setTitle($title)
