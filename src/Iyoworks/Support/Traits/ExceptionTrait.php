@@ -6,12 +6,9 @@ trait ExceptionTrait{
 
 	public static function make($message = null, $langParams = array(), $title = null, $code = 0)
 	{
-		if($langKey = static::langGroup($message))
+		if($translation = static::langGroup($message, $langParams))
 		{
-			$locale = Config::get('app.locale');
-			if (!is_array($langParams)) $langParams = ['value' => $langParams];
-			if (isset($nmessage)) $message = $nmessage;
-			$message = Lang::get($langKey, $langParams, $locale);
+			$message = $translation;
 		}
 
 		$error  = new static($message, $code);
@@ -20,13 +17,12 @@ trait ExceptionTrait{
 		return $error;
 	}
 
-	public static function langGroup($msg)
+	public static function langGroup($msg, array $params)
 	{
 		if($msg){
-			if(Lang::has($nmsg = 'exceptions.'.$msg))
-				return $nmsg;
-			if(Lang::has($msg))
-				return $msg;
+			if(Lang::has($nmsg = 'exceptions.'.$msg) 
+				or Lang::has($nmsg = $msg))
+				return Lang::get($nmsg, $params);
 		}
 		return false;
 	}
