@@ -4,20 +4,7 @@ use Config;
 trait ExceptionTrait{
 	protected $title;
 
-	public static function make($message = null, $langParams = array(), $title = null, $code = 0)
-	{
-		if($translation = static::langGroup($message, $langParams))
-		{
-			$message = $translation;
-		}
-
-		$error  = new static($message, $code);
-		if($title) $error->setTitle($title);
-
-		return $error;
-	}
-
-	public static function langGroup($msg, array $params)
+	public function langGroup($msg, array $params)
 	{
 		if($msg){
 			if(Lang::has($nmsg = 'exceptions.'.$msg) 
