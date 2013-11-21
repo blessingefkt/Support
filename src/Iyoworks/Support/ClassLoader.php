@@ -1,6 +1,7 @@
 <?php namespace Iyoworks\Support;
 
-class ClassLoader extends  \Illuminate\Support\ClassLoader{
+class ClassLoader extends  \Illuminate\Support\ClassLoader
+{
 
 	protected static $loader;
 
