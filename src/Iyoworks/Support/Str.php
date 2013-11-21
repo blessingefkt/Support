@@ -1,8 +1,14 @@
 <?php namespace Iyoworks\Support;
 
 class Str extends \Illuminate\Support\Str {
+	const ALPHA_NUM = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	const ALPHA = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	const HEXDEC = '0123456789abcdef';
+	const NUMERIC = '0123456789';
+	const NOZERO = '123456789';
+	const DISTINCT = '2345679ACDEFHJKLMNPRSTUVWXYZ';
 
-	public static function secureRandom($length = 42)
+	public static function secureRandom($length = 42, $pool = Str::ALPHA_NUM)
 	{
 		// We'll check if the user has OpenSSL installed with PHP. If they do
 		// we'll use a better method of getting a random string. Otherwise, we'll
@@ -23,9 +29,40 @@ class Str extends \Illuminate\Support\Str {
 			return substr(str_replace(array('/', '+', '='), '', base64_encode($bytes)), 0, $length);
 		}
 
-		$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
 		return substr(str_shuffle(str_repeat($pool, 5)), 0, $length);
+	}
+
+	public static function superRandom($length = 36, $prefix = null, $pool = Str::ALPHA_NUM, $forceLength = true)
+	{
+		if ($forceLength) $length -= strlen($prefix);
+
+		$token = "";
+		$max   = strlen( $pool );
+		for ( $i = 0; $i < $length; $i++ ) {
+			$token .= $pool[static::crypto_rand_secure( 0, $max )];
+		}
+		
+		return $prefix.$token;
+	}
+
+	protected static function cryptoRandSecure( $min, $max )
+	{
+		$range = $max - $min;
+			// not so random...
+		if ( $range < 0 ) return $min; 
+		$log    = log( $range, 2 );
+			// length in bytes
+		$bytes  = (int) ( $log / 8 ) + 1; 
+			// length in bits
+		$bits   = (int) $log + 1; 
+			// set all lower bits to 1
+		$filter = (int) ( 1 << $bits ) - 1; 
+		do {
+			$rnd = hexdec( bin2hex( openssl_random_pseudo_bytes( $bytes ) ) );
+				// discard irrelevant bits
+			$rnd = $rnd & $filter; 
+		} while ( $rnd >= $range );
+		return $min + $rnd;
 	}
 
 }
