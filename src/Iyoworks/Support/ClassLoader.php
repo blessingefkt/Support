@@ -3,23 +3,23 @@
 class ClassLoader extends  \Illuminate\Support\ClassLoader
 {
 
-	protected static $loader;
+	protected static $composer;
 
 	/**
-	 * @param  \Composer\Autoload\ClassLoader  $loader
+	 * @param  \Composer\Autoload\ClassLoader  $composer
 	 * @return void
 	 */
-	public static function setLoader(\Composer\Autoload\ClassLoader $loader)
+	public static function setComposer(\Composer\Autoload\ClassLoader $composer)
 	{
-		static::$loader = $loader;
+		static::$composer = $composer;
 	}
 
 	/**
-	 * @param  \Composer\Autoload\ClassLoader  $loader
+	 * @param  \Composer\Autoload\ClassLoader  $composer
 	 * @return void
 	 */
-	public static function getLoader()
+	public static function getComposer()
 	{
-		return static::$loader;
+		return static::$composer;
 	}
 }
