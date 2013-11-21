@@ -6,6 +6,10 @@ use Illuminate\Support\MessageBag;
 use Illuminate\Session\Store;
 use Illuminate\Translation\Translator;
 
+/**
+ * Modified version of Alerts for Laravel By Simon Hampel.
+ * @website https://bitbucket.org/hampel/alerts
+ */
 class AlertBag extends MessageBag {
 	/**
 	 * Translate messages to different languages
