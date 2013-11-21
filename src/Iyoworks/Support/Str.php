@@ -39,7 +39,7 @@ class Str extends \Illuminate\Support\Str {
 		$token = "";
 		$max   = strlen( $pool );
 		for ( $i = 0; $i < $length; $i++ ) {
-			$token .= $pool[static::crypto_rand_secure( 0, $max )];
+			$token .= $pool[static::cryptoRandSecure( 0, $max )];
 		}
 		
 		return $prefix.$token;
