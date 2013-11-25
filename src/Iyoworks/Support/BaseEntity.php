@@ -115,11 +115,12 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 */
 	public function getDefaultAttributeValues()
 	{
-		$tmp = $this->getAttributeDefinitions();
-		array_walk($tmp, function(&$value, $key){
-			$value = AttributeType::get($this->getAttributeDefinition($key), null);
-		});
-		return $tmp;
+		$defs = $this->getAttributeDefinitions();
+		$defaults = [];
+		foreach ($defs as $key => $def) {
+			$defaults[$key] = AttributeType::get($def, null);
+		}
+		return $defaults;
 	}
 
 	/**
