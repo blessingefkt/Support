@@ -4,15 +4,17 @@ use Config;
 trait ExceptionTrait{
 	protected $title;
 
-	public function langGroup($msg, array $params)
+	public function paraseMessage($key, $params)
 	{
-		if($msg){
-			if(Lang::has($nmsg = 'exceptions.'.$msg) 
-				or Lang::has($nmsg = $msg))
-				return Lang::get($nmsg, $params);
+		if (!is_array($params)) $params = [$params];
+		foreach ($params as &$param) {
+			if(is_array($param)) $param = implode(', ', $param);
 		}
-		return false;
+
+		return $this->getMessageTemplate($key, $params);
 	}
+
+	abstract protected function getMessageTemplate($key, $params);
 
 	public function setTitle($title)
 	{
@@ -42,4 +44,5 @@ trait ExceptionTrait{
 	{
 		return $this->title.': '.$this->getMessage();
 	}
+
 }
