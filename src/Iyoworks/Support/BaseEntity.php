@@ -223,7 +223,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 		return AttributeType::get($this->getAttributeDefinition($key), null);
 	}
 
-	protected getUndefinedAttribute($key)
+	protected function getUndefinedAttribute($key)
 	{
 		if ($this->strict)
 			throw new InvalidArgumentException($key);
@@ -264,7 +264,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 		$this->attributes[$key] = $value;
 	}
 
-	protected setUndefinedAttribute($key, $value)
+	protected function setUndefinedAttribute($key, $value)
 	{
 		if ($this->strict)
 			throw new InvalidArgumentException($key);
