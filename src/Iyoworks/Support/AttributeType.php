@@ -1,5 +1,7 @@
 <?php namespace Iyoworks\Support;
 
+use DateTime;
+
 class AttributeType {
 
 	const Int = 'integer';
