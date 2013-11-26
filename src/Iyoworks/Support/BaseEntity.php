@@ -8,7 +8,6 @@ use Illuminate\Support\Contracts\ArrayableInterface;
 abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableInterface {
 	const CREATED_AT = 'created_at';
 	const UPDATED_AT = 'updated_at';
-	public $exists = false;
 	protected $strict = false;
 	protected $usesTimestamps = true;
 	protected $attributes = [];
@@ -47,7 +46,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 * @param  array   $attributes
 	 * @param  boolean $exists
 	 */
-	public function __construct(array $attributes = [], $exists = false)
+	public function __construct(array $attributes = [])
 	{
 		if ( ! isset(static::$booted[$class = $this->className()]))
 		{
@@ -56,7 +55,6 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 			static::$booted[$class] = true;
 		}
 		$this->fill($attributes + $this->getDefaultAttributeValues());
-		$this->exists = $exists;
 	}
 
 	/**
@@ -65,9 +63,9 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 * @param  boolean $exists
 	 * @return \Iyoworks\Repositories\Contracts\EntityInterface
 	 */
-	public static function make(array $attributes = [], $exists = false)
+	public static function make(array $attributes = [])
 	{
-		return with(new static)->newInstance($attributes, $exists);
+		return with(new static)->newInstance($attributes);
 	}
 
 	/**
@@ -76,14 +74,12 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 * @param  boolean $exists
 	 * @return \Iyoworks\Repositories\Contracts\EntityInterface
 	 */
-	public function newInstance(array $attributes = array(), $exists = false)
+	public function newInstance(array $attributes = array())
 	{
 		// This method just provides a convenient way for us to generate fresh entity
 		// instances of this current entity. It is particularly useful during the
 		// hydration of new objects via the Eloquent query builder instances.
 		$entity = new static($attributes);
-
-		$entity->exists = $exists;
 
 		return $entity;
 	}
@@ -127,13 +123,12 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	/**
 	 * Creates a new entity from the query builder result
 	 * @param  stdEntity  $result
-	 * @param  boolean $exists
 	 * @return \Iyoworks\Repositories\Contracts\EntityInterface
 	 */
-	public function newExistingInstance($result, $exists = true)
+	public function buildNewInstance($result)
 	{
 		static::unguard();
-		$inst = $this->newInstance( (array) $result, $exists);
+		$inst = $this->newInstance( (array) $result);
 		$inst->syncOriginal();
 		static::reguard();
 		return $inst;
@@ -375,13 +370,11 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 
 	/**
 	 * Sync the original attributes with the current.
-	 * @param  bool $exists set the 'existence' state of the entity
 	 * @return \Iyoworks\Repositories\Contracts\EntityInterface
 	 */
-	public function syncOriginal($exists = null)
+	public function syncOriginal()
 	{
 		$this->original = $this->attributes;
-		if ($exists) $this->exists = (bool) $exists;
 		return $this;
 	}
 
@@ -583,6 +576,15 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	public function totallyGuarded()
 	{
 		return $this->guarded == array('*');
+	}
+
+	/**
+	 * Determine if entity exists
+	 * @return bool
+	 */
+	public function exists()
+	{
+		return !is_null($this->getKey());
 	}
 
 	/**
