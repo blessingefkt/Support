@@ -84,6 +84,16 @@ class AttributeType {
 		return (bool) $value;
 	}
 
+	protected function setDouble($value, array $def)
+	{
+		return (double) $value;
+	}
+
+	protected function getDouble($value, array $def)
+	{
+		return (double) $value;
+	}
+
 	protected function getEntity($value, array $def)
 	{
 		if(is_null($value))
@@ -112,31 +122,6 @@ class AttributeType {
 	protected function setHandle($value, array $def)
 	{
 		return handle($value);
-	}
-
-	protected function setDouble($value, array $def)
-	{
-		return (double) $value;
-	}
-
-	protected function getDouble($value, array $def)
-	{
-		return (double) $value;
-	}
-
-	protected function setSlug($value, array $def)
-	{
-		return slugify($value);
-	}
-
-	protected function setString($value, array $def)
-	{
-		return (string) $value;
-	}
-
-	protected function getString($value, array $def)
-	{
-		return (string)  $value;
 	}
 
 	protected function setJson($value, array $def)
@@ -168,6 +153,47 @@ class AttributeType {
 	protected function getSerial($value, array $def)
 	{
 		return unserialize($value);
+	}
+
+	protected function setSlug($value, array $def)
+	{
+		return slugify($value);
+	}
+
+	protected function setString($value, array $def)
+	{
+		return (string) $value;
+	}
+
+	protected function getString($value, array $def)
+	{
+		return (string)  $value;
+	}
+
+	protected function setTimestamp($value, array $def)
+	{
+		if(is_string($value))
+		{
+			$date = $this->newDateObject($value);
+			return $date->format($def['format']);
+		}
+		return $value;
+	}
+
+	protected function getTimestamp($value, array $def)
+	{
+		if (is_null($value)) return $this->newDateObject();
+
+		if (is_numeric($value))
+		{
+			return $this->newDateFromTimestamp($value);
+		}
+		elseif (is_string($value) && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value))
+		{
+			return $this->newDateFromFormat($value, 'Y-m-d');
+		}
+
+		return $this->newDateFromFormat($value, $def['format']);
 	}
 
 	protected function getUid($value, array $def)
@@ -216,6 +242,24 @@ class AttributeType {
 				'auto' => false
 				)
 			);
+	}
+
+	protected function newDateObject($value)
+	{
+		if($value) return new DateTime($value);
+		return new DateTime;
+	}
+
+	protected function newDateFromTimestamp($value)
+	{
+		$date = new DateTime;
+		$date->setTimestamp($value);
+		return $date;
+	}
+
+	protected function newDateFromFormat($value, $format)
+	{
+		return new DateTime($value);
 	}
 
 	public static function __callStatic($method, $args){
