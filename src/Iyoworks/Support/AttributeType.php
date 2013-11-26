@@ -244,7 +244,7 @@ class AttributeType {
 			);
 	}
 
-	protected function newDateObject($value)
+	protected function newDateObject($value = null)
 	{
 		if($value) return new DateTime($value);
 		return new DateTime;
