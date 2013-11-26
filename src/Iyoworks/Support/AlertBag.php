@@ -129,6 +129,18 @@ class AlertBag extends MessageBag {
 	}
 
 	/**
+	 * Merge a message bag
+	 * @param  Illuminate\Support\MessageBag $bag 
+	 * @return Iyoworks\Support\AlertBag       
+	 */
+	public function mergeBag(MessageBag $bag)
+	{
+		$this->merge($bag->getMessages());
+		
+		return $this;
+	}
+
+	/**
 	 * Dynamically handle alert additions.
 	 *
 	 * @param  string  $method
