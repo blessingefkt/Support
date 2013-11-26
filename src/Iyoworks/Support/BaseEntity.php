@@ -205,10 +205,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 * @return mixed
 	 */
 	public function getAttribute($key)
-	{
-		if($this->isPivotAttribute($key))
-			$key = $this->makePivotKey($key);
-		
+	{	
 		$inAttributes = array_key_exists($key, $this->attributes);
 		// If the key references an attribute, we can just go ahead and return the
 		// plain attribute value from the entity. This allows every attribute to
@@ -217,13 +214,19 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 		{
 			return $this->getAttributeValue($key);
 		}
-
-		if ($this->strict && !$this->isAttribute($key))
-			throw new InvalidArgumentException($key);
 		
+		if (!$this->isDefinedAttribute($key))
+			return $this->getUndefinedAttribute($key);
+
 		// If the value has not been set, check if it has a valid attribute type
 		// if so, get the default value for the type
 		return AttributeType::get($this->getAttributeDefinition($key), null);
+	}
+
+	protected getUndefinedAttribute($key)
+	{
+		if ($this->strict)
+			throw new InvalidArgumentException($key);
 	}
 
 	/**
@@ -247,21 +250,24 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 		if($this->isDefinedAttribute($key))
 			$value = AttributeType::set($this->getAttributeDefinition($key), $value);
 
-		if($this->isPivotAttribute($key))
-			$key = $this->makePivotKey($key);
-
 		// First we will check for the presence of a mutator for the set operation
 		// which simply lets the developers tweak the attribute as it is set on
 		// the entity, such as "json_encoding" an listing of data for storage.
 		if ($this->hasSetMutator($key))
 		{
-			$method = 'set'.studly_case($key).'Attribute';
-			return $this->{$method}($value);
+			return $this->mutateAttributeSetter($key, $value);
 		}
 
-		if ($this->strict && !$this->isAttribute($key))
-			throw new InvalidArgumentException($key);
+		if (!$this->isDefinedAttribute($key))
+			return $this->setUndefinedAttribute($key, $value);
 
+		$this->attributes[$key] = $value;
+	}
+
+	protected setUndefinedAttribute($key, $value)
+	{
+		if ($this->strict)
+			throw new InvalidArgumentException($key);
 		$this->attributes[$key] = $value;
 	}
 
@@ -292,7 +298,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 * @param  mixed   $value
 	 * @return mixed
 	 */
-	protected function mutateSetAttribute($key, $value)
+	protected function mutateAttributeSetter($key, $value)
 	{
 		return $this->{'set'.studly_case($key).'Attribute'}($value);
 	}
@@ -431,16 +437,6 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	}
 
 	/**
-	 * Checks if an attribute exists as a pivot attribute
-	 * @param  string
-	 * @return boolean
-	 */
-	public function isPivotAttribute($key)
-	{
-		return $this->isDefinedAttribute($this->makePivotKey($key));
-	}
-
-	/**
 	 * Checks if an attribute is a date type
 	 * @param  string
 	 * @return boolean
@@ -457,9 +453,8 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 */
 	public function isAttribute($key)
 	{
-		if(!$this->strict)
-			return true;
-		return $this->isDefinedAttribute($key) or $this->isPivotAttribute($key);
+		if(!$this->strict) return true;
+		return $this->isDefinedAttribute($key);
 	}
 
 	/**
@@ -525,16 +520,6 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	{
 		$definition = $this->getAttributeDefinition($key);
 		return array_get($definition, 'type', AttributeType::Mixed);
-	}
-
-	/**
-	 * Convert attribute name to pivot attribute 
-	 * @param  string $key 
-	 * @return string      
-	 */
-	protected function makePivotKey($key)
-	{
-		return 'pivot'.studly_case($key);
 	}
 
 	/**
