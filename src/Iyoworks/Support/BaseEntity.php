@@ -6,11 +6,12 @@ use Illuminate\Support\Contracts\JsonableInterface;
 use Illuminate\Support\Contracts\ArrayableInterface;
 
 abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableInterface {
+	const CREATED_AT = 'created_at';
+	const UPDATED_AT = 'updated_at';
 	public $exists = false;
 	protected $strict = false;
 	protected $usesTimestamps = true;
 	protected $attributes = [];
-	protected $entities = [];
 	protected $original= [];
 	protected $guarded = ['id'];
 	protected $hidden = [];
@@ -171,11 +172,6 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 		{
 			return $this->attributes[$key];
 		}
-
-		if (array_key_exists($key, $this->entities))
-		{
-			return $this->entities[$key];
-		}
 	}
 
 	/**
@@ -187,11 +183,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	{
 		$value = $this->getAttributeFromArray($key);
 		
-		if($this->isEntity($key))
-		{
-			$value = $this->getEntity($key, $value);
-		}
-		elseif($this->isDefinedAttribute($key))
+		if($this->isDefinedAttribute($key))
 		{
 			$value = AttributeType::get($this->getAttributeDefinition($key), $value);
 		}
@@ -235,21 +227,6 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	}
 
 	/**
-	 * Get an attribute from the entity.
-	 * @param  string  $key
-	 * @return mixed
-	 */
-	protected function getEntity($key, $value)
-	{
-		if(is_null($value))
-		{
-			if($class = $this->getAttributeDefinition($key)['class'])
-				return new $class;
-		}
-		return $value;
-	}
-
-	/**
 	 * Determine if a get mutator exists for an attribute.
 	 * @param  string  $key
 	 * @return bool
@@ -267,9 +244,6 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 */
 	public function setAttribute($key, $value)
 	{
-		if($this->isEntity($key))
-			return $this->setEntity($key, $value);
-
 		if($this->isDefinedAttribute($key))
 			$value = AttributeType::set($this->getAttributeDefinition($key), $value);
 
@@ -289,17 +263,6 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 			throw new InvalidArgumentException($key);
 
 		$this->attributes[$key] = $value;
-	}
-
-	/**
-	 * Set a given relation on the entity.
-	 * @param  string  $key
-	 * @param  mixed   $value
-	 * @return void
-	 */
-	public function setEntity($key, $value)
-	{
-		$this->entities[$key] = $value;
 	}
 
 	/**
@@ -529,8 +492,8 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	{
 		if($this->usesTimestamps)
 		{
-			$this->attributeDefinitions['created_at'] = AttributeType::Timestamp;
-			$this->attributeDefinitions['updated_at'] = AttributeType::Timestamp;
+			$this->attributeDefinitions[static::CREATED_AT] = AttributeType::Timestamp;
+			$this->attributeDefinitions[static::UPDATED_AT] = AttributeType::Timestamp;
 		}
 		return $this->attributeDefinitions;
 	}
@@ -745,7 +708,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 */
 	public function __isset($key)
 	{
-		return isset($this->attributes[$key]) or isset($this->entities[$key]);
+		return isset($this->attributes[$key]);
 	}
 
 	/**
@@ -756,8 +719,6 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	public function __unset($key)
 	{
 		unset($this->attributes[$key]);
-
-		unset($this->entities[$key]);
 	}
 
 	/**
