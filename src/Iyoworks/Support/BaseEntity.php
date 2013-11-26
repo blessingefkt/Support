@@ -363,7 +363,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 
 	/**
 	 * Get the entity's original attribute values.
-	 * @param  string  $key get the original attribute value with key
+	 * @param  string  $key 	get the original attribute value with key
 	 * @param  mixed   $default
 	 * @return array
 	 */
@@ -375,11 +375,13 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 
 	/**
 	 * Sync the original attributes with the current.
+	 * @param  bool $exists set the 'existence' state of the entity
 	 * @return \Iyoworks\Repositories\Contracts\EntityInterface
 	 */
-	public function syncOriginal()
+	public function syncOriginal($exists = null)
 	{
 		$this->original = $this->attributes;
+		if ($exists) $this->exists = (bool) $exists;
 		return $this;
 	}
 
