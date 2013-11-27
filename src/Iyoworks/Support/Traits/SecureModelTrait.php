@@ -4,14 +4,14 @@ trait SecureModelTrait {
 	protected $errors;
 	protected $validator;
 
-	protected function preModelCreate() { 
+	public function preModelCreate() { 
 		$this->validator = $this->makeValidator();
 		$pass = $this->validator->validForInsert($this->attributes);
 		$this->errors = $this->validator->errors();
 		return $pass;
 	}
 	
-	protected function preModelUpdate() { 
+	public function preModelUpdate() { 
 		$data = $this->getDirty();
 		$data['id'] = $this->getKey();
 		$this->validator = $this->makeValidator();
@@ -20,7 +20,7 @@ trait SecureModelTrait {
 		return  $pass;
 	}
 
-	protected function preModelDestroy() {
+	public function preModelDestroy() {
 		$data['id'] = $this->getKey();
 		$this->validator = $this->makeValidator();
 		$pass = $this->validator->validForDelete($data);
