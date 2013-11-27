@@ -44,7 +44,6 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	/**
 	 * Create a new instance
 	 * @param  array   $attributes
-	 * @param  boolean $exists
 	 */
 	public function __construct(array $attributes = [])
 	{
@@ -61,7 +60,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 * Create a new instance
 	 * @param  array   $attributes
 	 * @param  boolean $exists
-	 * @return \Iyoworks\Repositories\Contracts\EntityInterface
+	 * @return \Iyoworks\Support\BaseEntity
 	 */
 	public static function make(array $attributes = [])
 	{
@@ -72,7 +71,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 * Create a new instance
 	 * @param  array   $attributes
 	 * @param  boolean $exists
-	 * @return \Iyoworks\Repositories\Contracts\EntityInterface
+	 * @return \Iyoworks\Support\BaseEntity
 	 */
 	public function newInstance(array $attributes = array())
 	{
@@ -123,7 +122,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	/**
 	 * Creates a new entity from the query builder result
 	 * @param  stdEntity  $result
-	 * @return \Iyoworks\Repositories\Contracts\EntityInterface
+	 * @return \Iyoworks\Support\BaseEntity
 	 */
 	public function buildNewInstance($result)
 	{
@@ -329,7 +328,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 
 	/**
 	 * Clone the entity into a new, non-existing instance.
-	 * @return \Iyoworks\Repositories\Contracts\EntityInterface
+	 * @return \Iyoworks\Support\BaseEntity
 	 */
 	public function replicate()
 	{
@@ -370,7 +369,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 
 	/**
 	 * Sync the original attributes with the current.
-	 * @return \Iyoworks\Repositories\Contracts\EntityInterface
+	 * @return \Iyoworks\Support\BaseEntity
 	 */
 	public function syncOriginal()
 	{
@@ -399,7 +398,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	public function exists()
 	{
 		$value = $this->getKey();
-		return ($this->exists and isset($value));
+		return isset($value);
 	}
 
 	/**
@@ -576,15 +575,6 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	public function totallyGuarded()
 	{
 		return $this->guarded == array('*');
-	}
-
-	/**
-	 * Determine if entity exists
-	 * @return bool
-	 */
-	public function exists()
-	{
-		return !is_null($this->getKey());
 	}
 
 	/**
