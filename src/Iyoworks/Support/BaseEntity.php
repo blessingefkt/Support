@@ -332,7 +332,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	 */
 	public function replicate()
 	{
-		return $this->newExistingInstance($this->attributes, false);
+		return $this->buildNewInstance($this->attributes);
 	}
 
 	/**
