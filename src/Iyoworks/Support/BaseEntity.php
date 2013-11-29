@@ -578,7 +578,7 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 	}
 
 	/**
-	 * Convert the entity instance to an array.
+	 * Convert the all visbile attributes to an array.
 	 * @return array
 	 */
 	public function toArray()
@@ -596,17 +596,50 @@ abstract class BaseEntity implements ArrayAccess, ArrayableInterface, JsonableIn
 			$attributes[$key] = $this->mutateAttribute($key, $attributes[$key]);
 		}
 
-		foreach ($attributes as $key => &$value)
-		{
-			if($this->isDateType($key) and $value instanceof \DateTime)
-			{
-				$format = $this->getAttributeDefinition($key)['format'];
-				$value = $value->format($format);
-			}
-		}
-
-		return $attributes;
+        return $this->processArray($attributes);
 	}
+
+    /**
+     * Convert the entity instance to an array.
+     * @return array
+     */
+    public function attributeArray()
+    {
+        $attributes = $this->attributes;
+
+        // We want to spin through all the mutated attributes for this entity and call
+        // the mutator for the attribute. We cache off every mutated attributes so
+        // we don't have to constantly check on attributes that actually change.
+
+        foreach ($this->getMutatedAttributes() as $key)
+        {
+            if (! array_key_exists($key, $attributes)) continue;
+
+            $attributes[$key] = $this->mutateAttribute($key, $attributes[$key]);
+        }
+
+        return $this->processArray($attributes);
+    }
+
+    /**
+     * Convert attributes to strings
+     * @param array $attributes
+     * @return array
+     */
+    protected function processArray(array $attributes)
+    {
+
+        foreach ($attributes as $key => &$value)
+        {
+            if($this->isDateType($key) and $value instanceof \DateTime)
+            {
+                $format = $this->getAttributeDefinition($key)['format'];
+                $value = $value->format($format);
+            }
+        }
+
+        return $attributes;
+    }
 
 	/**
 	 * Convert the entity instance to JSON.
