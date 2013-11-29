@@ -194,6 +194,10 @@ class AttributeType {
 		{
 			return $this->newDateFromFormat($value, 'Y-m-d');
 		}
+        elseif ($value instanceof \DateTime)
+        {
+            return $value;
+        }
 
 		return $this->newDateFromFormat($value, $def['format']);
 	}
