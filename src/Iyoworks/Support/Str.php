@@ -8,6 +8,17 @@ class Str extends \Illuminate\Support\Str {
 	const NOZERO = '123456789';
 	const DISTINCT = '2345679ACDEFHJKLMNPRSTUVWXYZ';
 
+    public static function guid($namespace = '', $pool = Str::ALPHA_NUM)
+    {
+        $uid = static::superRandom(32, null, $pool);
+        $guid = substr($uid,  0,  8) .
+            '-' . substr($uid,  8,  4) .
+            '-' . substr($uid, 12,  4) .
+            '-' . substr($hash, 16,  4) .
+            '-' . substr($uid, 20, 12);
+        return $namespace.$guid;
+    }
+
 	public static function secureRandom($length = 42, $pool = Str::ALPHA_NUM)
 	{
 		// We'll check if the user has OpenSSL installed with PHP. If they do
@@ -35,7 +46,6 @@ class Str extends \Illuminate\Support\Str {
 	public static function superRandom($length = 36, $prefix = null, $pool = Str::ALPHA_NUM, $forceLength = true)
 	{
 		if ($forceLength) $length -= strlen($prefix);
-
 		$token = "";
 		$max   = strlen( $pool );
 		for ( $i = 0; $i < $length; $i++ ) {
