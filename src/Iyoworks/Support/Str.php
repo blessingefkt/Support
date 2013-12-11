@@ -14,7 +14,7 @@ class Str extends \Illuminate\Support\Str {
         $guid = substr($uid,  0,  8) .
             '-' . substr($uid,  8,  4) .
             '-' . substr($uid, 12,  4) .
-            '-' . substr($hash, 16,  4) .
+            '-' . substr($uid, 16,  4) .
             '-' . substr($uid, 20, 12);
         return $namespace.$guid;
     }
