@@ -36,4 +36,11 @@ class JsonStore {
 		$data = array_merge($oldData, $data);
 		return $this->saveData($data);
 	}
+
+    public function removeData($key)
+    {
+        $data = $this->loadData();
+        unset($data[$key]);
+        return $this->saveData($data);
+    }
 }
