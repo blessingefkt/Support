@@ -29,6 +29,13 @@ class JsonStore {
 		return file_put_contents($this->filepath, $contents, LOCK_EX);
 	}
 
+    public function setData($key, $data)
+    {
+        $oldData = $this->loadData();
+        $oldData[$key] = $data;
+        return $this->saveData($oldData);
+    }
+
 	public function appendData($data = null)
 	{
 		$oldData = $this->loadData();
