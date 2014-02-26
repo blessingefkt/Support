@@ -52,15 +52,20 @@ class AlertBag extends MessageBag {
 		if ($levels) $this->levels = $levels;
 	}
 
-	/**
-	 * Store the messages in the current session.
-	 */
-	public function flash()
-	{
-		if(static::$session)
-			static::$session->flash($this->getSessionKey(), $this);
-		return $this;
-	}
+    /**
+     * Store the messages in the current session.
+     *
+     * @return $this|Illuminate\Session\Store
+     */
+    public function flash()
+    {
+        if(static::$session)
+        {
+            static::$session->flash($this->getSessionKey(), $this);
+            return static::$session;
+        }
+        return $this;
+    }
 
 	public function getLevelNames()
 	{
