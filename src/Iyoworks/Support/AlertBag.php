@@ -9,6 +9,10 @@ use Illuminate\Translation\Translator;
 /**
  * Modified version of Alerts for Laravel By Simon Hampel.
  * @website https://bitbucket.org/hampel/alerts
+ * @method $this info()	info(string|array $message, array $langReplacements = null, string $locale = null)
+ * @method $this warning()	warning(string|array $message, array $langReplacements = null, string $locale = null)
+ * @method $this error()	danger(string|array $message, array $langReplacements = null, string $locale = null)
+ * @method $this success()	success(string|array $message, array $langReplacements = null, string $locale = null)
  */
 class AlertBag extends MessageBag {
 	/**
@@ -88,7 +92,11 @@ class AlertBag extends MessageBag {
 		return $this;
 	}
 
-	public function getMessagesByType($searchType = null)
+    /**
+     * @param null $searchType
+     * @return array
+     */
+    public function getMessagesByType($searchType = null)
 	{
 		$alerts = [];
 		foreach ($this->getMessages() as $type => $messages)
@@ -107,13 +115,18 @@ class AlertBag extends MessageBag {
 		return $alerts;
 	}
 
-	protected function translateMessage($message, $replacements)
+    /**
+     * @param $message
+     * @param $replacements
+     * @return mixed
+     */
+    protected function translateMessage($message, $replacements)
 	{
 		if (static::$translator and static::$translator->has($message))
 		{
 			// if there is a language entry which matches this message, use that instead
 
-			if (isset($replacements) AND is_array($replacements))
+			if (isset($replacements) && is_array($replacements))
 			{
 				// there are replacements specified
 				$message = static::$translator->get($message, $replacements);
