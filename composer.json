@@ -1,7 +1,7 @@
 {
   "name": "iyoworks/support",
   "description": "Useful classes",
-  "keywords" : [ "laravel", "laravel 4"],
+  "keywords" : [ "laravel"],
   "authors": [
     {
       "name": "Blessing Osakue",

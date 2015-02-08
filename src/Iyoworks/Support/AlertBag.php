@@ -9,10 +9,10 @@ use Illuminate\Translation\Translator;
 /**
  * Modified version of Alerts for Laravel By Simon Hampel.
  * @website https://bitbucket.org/hampel/alerts
- * @method $this info()	info(string|array $message, array $langReplacements = null, string $locale = null)
- * @method $this warning()	warning(string|array $message, array $langReplacements = null, string $locale = null)
- * @method $this error()	danger(string|array $message, array $langReplacements = null, string $locale = null)
- * @method $this success()	success(string|array $message, array $langReplacements = null, string $locale = null)
+ * @method info(string $message, array $langReplacements = null, string $locale = null)
+ * @method warning(string $message, array $langReplacements = null, string $locale = null)
+ * @method danger(string $message, array $langReplacements = null, string $locale = null)
+ * @method success(string $message, array $langReplacements = null, string $locale = null)
  */
 class AlertBag extends MessageBag {
 	/**
